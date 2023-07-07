@@ -9,9 +9,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -42,8 +40,9 @@ public class openAPIService {
         }
         return result;
     }
+        public List<Map<String, String>> findRandomWord() {
 
-    public Map<String, String> findRandomWord() {
+//    public Map<String, String> findRandomWord() {
         try {
             String url = "https://opendict.korean.go.kr/api/view?certkey_no=5609&key=BAAA5C2F46E8178AC1D5714D4775EAB5&&target_type=view&req_type=xml&method=target_code&q="+getTargetCode();
 
@@ -57,27 +56,38 @@ public class openAPIService {
             // 파싱할 tag
             NodeList senseInfoList = doc.getElementsByTagName("senseInfo");
             NodeList wordInfoList = doc.getElementsByTagName("wordInfo");
+            log.info(senseInfoList.toString());
+//            int randomIndex = new Random().nextInt(senseInfoList.getLength());
 
-            int randomIndex = new Random().nextInt(senseInfoList.getLength());
+            List<Map<String, Node>> list = new ArrayList<>();
+            List<Map<String, String>> array = new ArrayList<>();
+            for(int i =0 ;i<senseInfoList.getLength();i++){
+                Node senseInfoNode = senseInfoList.item(i);
+            Node wordInfoNode = wordInfoList.item(i);
+            Map<String, Node> map = new  HashMap<>();
+            map.put("def", senseInfoNode);
+            map.put("word",wordInfoNode);
+                if (senseInfoNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element senseInfoElement = (Element) senseInfoNode;
+                    Element wordInfoElement = (Element) wordInfoNode;
 
-            Node senseInfoNode = senseInfoList.item(randomIndex);
-            Node wordInfoNode = wordInfoList.item(randomIndex);
-            if (senseInfoNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element senseInfoElement = (Element) senseInfoNode;
-                Element wordInfoElement = (Element) wordInfoNode;
+                    String definition = getTagValue("definition", senseInfoElement);
+                    String word = getTagValue("word", wordInfoElement);
+                    log.info("랜덤 단어: " + word);
+                    log.info("뜻: " + definition);
 
-                String definition = getTagValue("definition", senseInfoElement);
-                String word = getTagValue("word", wordInfoElement);
-                log.info("랜덤 단어: " + word);
-                log.info("뜻: " + definition);
+                    Map<String, String> result = new HashMap<>();
 
-                Map<String, String> result = new HashMap<>();
+                    result.put("definition", definition);
+                    result.put("word", word);
+                    array.add(result);
+                }
+                log.info(array.toString());
+                    return array;
 
-                result.put("definition", definition);
-                result.put("word", word);
-
-                return result;
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.w3c.dom.Node;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,9 +21,10 @@ public class controller {
 
     @GetMapping
     public ResponseEntity<?> getQuiz() {
-        Map<String, String> randomWord = openAPIService.findRandomWord();
+//        Map<String, String> randomWord = openAPIService.findRandomWord();
+        List<Map<String, String>> randomWord = openAPIService.findRandomWord();
         if(randomWord != null) {
-            return ResponseEntity.ok().body(randomWord);
+            return ResponseEntity.ok().body(openAPIService.findRandomWord());
         } else {
             return ResponseEntity.notFound().build();
         }
