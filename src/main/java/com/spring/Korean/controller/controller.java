@@ -1,5 +1,5 @@
 package com.spring.Korean.controller;
-
+//API 7/10 전부사용하기
 import com.spring.Korean.service.openAPIService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
